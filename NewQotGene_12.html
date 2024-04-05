@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photography Quote Generator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    position: relative;
+  }
+  h1 {
+    text-align: center;
+    color: #4CAF50;
+    margin-top: 0;
+    margin-bottom: 30px;
+  }
+  label {
+    font-weight: bold;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="checkbox"],
+  input[type="submit"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="submit"]:hover {
+    border-color: #4CAF50;
+  }
+  .duration-wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+  input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  .quote-result {
+    background-color: #f5f5f5;
+    color: #444;
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 30px;
+    display: none;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .quote-result pre {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  .quote-result .copy-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #4CAF50;
+    cursor: pointer;
+  }
+  .header-image {
+    width: 100%;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <img class="header-image" src="https://drive.google.com/file/d/1Khj4Gh35boTQXjtJeKVx4atm11YuTLCe/view?usp=sharing" alt="Photography Header Image">
+  <h1>Photography Quote Generator</h1>
+  <form id="quoteForm">
+    <label for="clientName">Client Name:</label>
+    <input type="text" id="clientName" name="clientName" placeholder="Enter client's name" required>
+    
+    <label for="companyName">Company Name:</label>
+    <input type="text" id="companyName" name="companyName" placeholder="Enter your company name" required>
+    
+    <label for="eventName">Event Name:</label>
+    <input type="text" id="eventName" name="eventName" placeholder="Enter event name" required>
+    
+    <label for="date">Event Date:</label>
+    <input type="date" id="date" name="date" required>
+    
+    <label for="time">Event Time:</label>
+    <input type="text" id="time" name="time" placeholder="E.g., 10:00 AM - 2:00 PM" required>
+    
+    <label for="duration">Duration (in hours):</label>
+    <input type="number" id="duration" name="duration" min="1" max="20" required>
+    
+    <label for="location">Event Location:</label>
+    <input type="text" id="location" name="location" placeholder="Enter event location" required>
+    
+    <label>Final Video Duration (Min-Max):</label>
+    <div class="duration-wrapper">
+      <input type="number" id="minVideoDuration" name="minVideoDuration" min="1" max="60" placeholder="Min" required>
+      <input type="number" id="maxVideoDuration" name="maxVideoDuration" min="2" max="61" placeholder="Max" required>
+    </div>
+
+    <label for="price">Price (in USD):</label>
+    <input type="number" id="price" name="price" placeholder="Enter price" required>
+    
+    <label for="includeInstagramReel">Include Instagram Reel:</label>
+    <input type="checkbox" id="includeInstagramReel" name="includeInstagramReel">
+    
+    <input type="submit" value="Generate Quote">
+  </form>
+
+  <div class="quote-result" id="quoteResult">
+    <i class="far fa-copy copy-icon" onclick="copyToClipboard()"></i>
+    <pre id="quoteText"></pre>
+  </div>
+</div>
+
+<script>
+  document.getElementById('quoteForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const clientName = document.getElementById('clientName').value;
+    const companyName = document.getElementById('companyName').value;
+    const eventName = document.getElementById('eventName').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const duration = document.getElementById('duration').value;
+    const location = document.getElementById('location').value;
+    const minVideoDuration = document.getElementById('minVideoDuration').value;
+    const maxVideoDuration = document.getElementById('maxVideoDuration').value;
+    const price = document.getElementById('price').value;
+    const includeInstagramReel = document.getElementById('includeInstagramReel').checked;
+    
+    let deliverables = `
+    1. Photos - no limit - edited
+    2. Video + drone - edit final video 4k UHD duration of ${minVideoDuration} mins to ${maxVideoDuration} mins`;
+    
+    if (includeInstagramReel) {
+      deliverables += "\n3. Instagram reel";
+    }
+    
+    const quote = `
+    Hi ${clientName},
+
+    Thank you for considering ${companyName} for your photography needs. Please find below the quote for your upcoming event:
+
+    Event Details:
+    • Event Name: ${eventName}
+    • Date: ${date}
+    • Time: ${time}
+    • Duration: ${duration} hours
+    • Location: ${location}
+
+    Price: $${price} (Cash)
+
+    Deliverables:
+    ${deliverables}
+
+    If there is any additional information you require or if you have any questions, please feel free to contact us.
+
+    Looking forward to capturing your special moments!
+
+    Best regards,
+    ${companyName}
+    `;
+    
+    document.getElementById('quoteText').innerText = quote;
+    document.getElementById('quoteResult').style.display = 'block';
+  });
+
+  function copyToClipboard() {
+    const quoteText = document.getElementById('quoteText');
+    const range = document.createRange();
+    range.selectNode(quoteText);
+    window.getSelection().removeAllRanges(); 
+    window.getSelection().addRange(range); 
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    alert('Quote copied to clipboard!');
+  }
+</script>
+
+</body>
+</html>
